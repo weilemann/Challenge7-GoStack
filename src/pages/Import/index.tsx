@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import filesize from 'filesize';
-
 import Header from '../../components/Header';
 import FileList from '../../components/FileList';
 import Upload from '../../components/Upload';
@@ -20,22 +18,43 @@ interface FileProps {
 
 const Import: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<FileProps[]>([]);
+  const [hasError, setHasError] = useState<boolean>();
   const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
+    if (!uploadedFiles.length) {
+      setHasError(true);
+      return;
+    }
 
-    // TODO
-
+    const data = new FormData();
+    uploadedFiles.forEach(file => {
+      data.append('file', file.file, file.name);
+    });
     try {
-      // await api.post('/transactions/import', data);
+      await api.post('/transactions/import', data);
+      setUploadedFiles([]);
+      history.push('/');
     } catch (err) {
-      // console.log(err.response.error);
+      console.log(err.response.error);
     }
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    setUploadedFiles(
+      files.map(
+        (file): FileProps => {
+          // console.log(file);
+          const kbytes = Math.ceil(file.size / 1024);
+          setHasError(false);
+          return {
+            file,
+            name: file.name,
+            readableSize: `${kbytes} kbytes`,
+          };
+        },
+      ),
+    );
   }
 
   return (
@@ -45,6 +64,11 @@ const Import: React.FC = () => {
         <Title>Importar uma transação</Title>
         <ImportFileContainer>
           <Upload onUpload={submitFile} />
+          {hasError && (
+            <span style={{ color: '#ff0033' }}>
+              Por favor, insira um ou mais arquivos
+            </span>
+          )}
           {!!uploadedFiles.length && <FileList files={uploadedFiles} />}
 
           <Footer>

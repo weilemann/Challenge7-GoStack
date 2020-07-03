@@ -61,6 +61,13 @@ export const TableContainer = styled.section`
       text-align: left;
       font-size: 16px;
       line-height: 24px;
+
+      span {
+        padding: 6px;
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+      }
     }
 
     td {
@@ -90,6 +97,25 @@ export const TableContainer = styled.section`
 
     td:last-child {
       border-radius: 0 8px 8px 0;
+    }
+
+    button {
+      background-color: #e83f5b;
+      border-radius: 10px;
+      border: 0;
+      color: white;
+      padding: 10px;
+      width: 100px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #c7364e;
+      }
     }
   }
 `;

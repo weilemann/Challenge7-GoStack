@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+// import { FiChevronDown } from 'react-icons/fi';
+
 import income from '../../assets/income.svg';
 import outcome from '../../assets/outcome.svg';
 import total from '../../assets/total.svg';
@@ -34,6 +36,23 @@ const Dashboard: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [balance, setBalance] = useState<Balance>({} as Balance);
 
+  async function removeTransaction(id: string): Promise<void> {
+    await api.delete(`/transactions/${id}`);
+  }
+
+  // async function sortTransactions(): Promise<void> {
+  //   const sortedTransactions = transactions.sort((a, b) => {
+  //     if (a.title > b.title) {
+  //       return 1;
+  //     }
+  //     if (a.title < b.title) {
+  //       return -1;
+  //     }
+  //     return 0;
+  //   });
+  //   setTransactions(sortedTransactions);
+  // }
+
   useEffect(() => {
     async function loadTransactions(): Promise<void> {
       const { data } = await api.get('/transactions');
@@ -42,7 +61,7 @@ const Dashboard: React.FC = () => {
     }
 
     loadTransactions();
-  }, []);
+  }, [transactions]);
 
   return (
     <>
@@ -82,10 +101,30 @@ const Dashboard: React.FC = () => {
           <table>
             <thead>
               <tr>
-                <th>Título</th>
-                <th>Preço</th>
-                <th>Categoria</th>
-                <th>Data</th>
+                <th>
+                  Título
+                  {/* <span id="title" onClick={sortTransactions}>
+                    <FiChevronDown />
+                  </span> */}
+                </th>
+                <th>
+                  Preço
+                  {/* <span id="price" onClick={sortTransactions}>
+                    <FiChevronDown />
+                  </span> */}
+                </th>
+                <th>
+                  Categoria
+                  {/* <span id="category" onClick={sortTransactions}>
+                    <FiChevronDown />
+                  </span> */}
+                </th>
+                <th>
+                  Data
+                  {/* <span id="date" onClick={sortTransactions}>
+                    <FiChevronDown />
+                  </span> */}
+                </th>
               </tr>
             </thead>
 
@@ -104,6 +143,14 @@ const Dashboard: React.FC = () => {
                   )}
                   <td>{transaction.category.title}</td>
                   <td>{formatDate(new Date(transaction.created_at))}</td>
+                  <td>
+                    <button
+                      type="button"
+                      onClick={() => removeTransaction(transaction.id)}
+                    >
+                      Remover
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
